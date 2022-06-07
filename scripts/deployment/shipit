@@ -54,6 +54,7 @@ def handle_error(msg: str) -> None:
   print(msg)
   if error is None:
     error = msg
+  sys.exit(-1)
 
 
 def debug(str: str, str2: Any = None, str3: Any = None) -> None:
@@ -580,7 +581,8 @@ def containers_build(cliargs: ContainerBuildArguments) -> None:
     return p
 
   commitSha = run_output(["git", "rev-parse", "--short", "HEAD"])
-  build("dark-base-service", "containers/base-service-Dockerfile", commitSha).wait()
+  p0 = build("dark-base-service", "containers/base-service-Dockerfile", commitSha)
+  wait_for_asyncs([p0])
   p1 = build("dark-ocaml-service", "containers/ocaml-service-Dockerfile", None)
   p2 = build("dark-fsharp-service", "containers/fsharp-service-Dockerfile", None)
   wait_for_asyncs([p1, p2])

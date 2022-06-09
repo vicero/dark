@@ -147,13 +147,18 @@ RUN DEBIAN_FRONTEND=noninteractive \
       libgcc1 \
       libgssapi-krb5-2 \
       libicu70 \
-      libssl3 \
       libstdc++6 \
       zlib1g \
       lldb \
       # end .NET dependencies
       && apt clean \
       && rm -rf /var/lib/apt/lists/*
+
+# CLEANUP
+# OCaml only support libssl1.1 at the moment, but the ubuntu ships with libssl3
+# (which .net should be fine with)
+RUN curl http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.0l-1~deb9u6_amd64.deb -o libssl1.1.1.deb -s \
+      && sudo dpkg -i libssl1.1.1.deb
 
 ############################
 # Dark user

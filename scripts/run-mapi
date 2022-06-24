@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+cookie=$(curl -i -s -X POST 'http://darklang.localhost:9000/login' \
+--form 'username="dark"' \
+--form 'password="what"' | awk '/Set-Cookie: / {print $2}' | sed 's/;//')
+
+xcref=$(curl -i -X GET 'http://darklang.localhost:9000/a/dark' \
+--cookie $cookie | awk '/const csrfToken = "/ {print $4}' | sed 's/[";]//g')
+
+mapi run \
+  --url "http://darklang.localhost:9000" \
+  --interactive \
+  --ignore-rule InvalidResponseSpec \
+  --header "X-CSRF-Token:$xcref" \
+  --header "Host:darklang.localhost:9000" \
+  --cookie-auth $cookie \
+  jamesplace/dark 30sec \
+  ./fsharp-backend/openapi.yml

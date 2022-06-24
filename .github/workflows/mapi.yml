@@ -1,0 +1,45 @@
+name: Mayhem for API
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  schedule:
+    - cron: '5 21 * * *'
+jobs:
+  mayhem:
+    name: Mayhem API analysis
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup build environment
+      run: |
+            set -x
+            scripts/devcontainer/_create-app-directories
+            scripts/devcontainer/_create-cache-directories
+            scripts/devcontainer/_setup-hosts
+            scripts/devcontainer/_start-background-services postgresql
+            env
+
+    - run: touch backend/static/appsupport.js
+    - run: cp client/static/favicon-32x32.png backend/static/
+    - run: scripts/build/_generate-etags
+    - run: ./scripts/build/_dotnet-wrapper tool restore
+    - run: ./scripts/build/_dotnet-wrapper paket restore
+    - run: ./scripts/build/_dotnet-wrapper publish -c Release fsbinaries.sln /p:DebugType=None /p:DebugSymbols=false
+
+    - name: Run Mayhem for API to check for vulnerabilities
+      uses: ForAllSecure/mapi-action@v1
+      continue-on-error: true
+      with:
+        mapi-token: ${{ secrets.MAPI_TOKEN }}
+        api-url: http://localhost:9000
+        api-spec: ./scripts/mapi/openapi.yaml
+        target: mayhemheroes/stanfordnlp
+        duration: 60
+        sarif-report: mapi.sarif
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: mapi.sarif

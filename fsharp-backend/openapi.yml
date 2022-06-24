@@ -1,0 +1,148 @@
+openapi: 3.0.0
+info:
+  title: dark-fsharp-backend
+  version: 1.0.0
+paths:
+  /check-apiserver:
+    get:
+      summary: Check API Server
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              examples:
+                success:
+                  value: 'success: this is apiserver'
+
+  /api/{canvas}/get_404s:
+    post:
+      summary: Get 404s
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error
+
+  /api/{canvas}/packages:
+    post:
+      summary: Get Packages
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error
+
+  /api/{canvas}/initial_load:
+    post:
+      summary: Initial Load
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error
+
+  /api/{canvas}/all_traces:
+    post:
+      summary: All Traces
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error
+
+  /api/{canvas}/delete_404:
+    post:
+      summary: Delete 404
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: object
+              properties:
+                space:
+                  type: "string"
+                path:
+                  type: "string"
+                modifier:
+                  type: "string"
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error
+
+  /api/{canvas}/get_trace_data:
+    post:
+      summary: Get Trace Data
+      parameters:
+        - in: path
+          name: canvas
+          required: true
+          schema:
+            type: string
+            example: dark
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tlid:
+                  type: "string"
+                trace_id:
+                  type: "string"
+
+      responses:
+        '200':
+          description: OK
+
+        default:
+          description: Unexpected Error

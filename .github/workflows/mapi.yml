@@ -15,6 +15,7 @@ jobs:
     - name: Setup build environment
       run: |
             set -x
+            export $(grep -v '^#' config/dev | xargs)
             scripts/devcontainer/_create-app-directories
             scripts/devcontainer/_create-cache-directories
             scripts/devcontainer/_setup-hosts
